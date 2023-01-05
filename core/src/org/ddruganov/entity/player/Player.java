@@ -7,6 +7,7 @@ import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.RenderComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
+import org.ddruganov.entity.component.physics.PositionTracker;
 import org.ddruganov.entity.component.player.PlayerControllerComponent;
 import org.ddruganov.util.PhysicsBodyBuilder;
 
@@ -25,7 +26,7 @@ public class Player extends Entity {
                         .setTexture(texture)
                         .setBodyType(BodyDef.BodyType.DynamicBody)
                         .get(),
-                renderer,
+                new PositionTracker[]{renderer},
                 controller);
         addComponent(physicsComponent);
     }

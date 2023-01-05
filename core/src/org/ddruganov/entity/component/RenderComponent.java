@@ -16,7 +16,7 @@ public class RenderComponent implements EntityComponent, PositionTracker {
 
     @Override
     public void update(Game game) {
-        game.getSpriteBatch().draw(texture, position.x, position.y);
+        game.getSpriteBatch().draw(texture, position.x - ((float) texture.getWidth() / 2), position.y - ((float) texture.getHeight() / 2));
     }
 
     @Override

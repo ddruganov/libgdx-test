@@ -9,7 +9,6 @@ public final class PhysicsBodyBuilder {
     private final World world;
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
-    private Texture texture;
 
     public PhysicsBodyBuilder(World world) {
         this.world = world;
@@ -18,7 +17,9 @@ public final class PhysicsBodyBuilder {
     }
 
     public PhysicsBodyBuilder setTexture(Texture value) {
-        this.texture = value;
+        this.setShape(new PolygonShape() {{
+            setAsBox((float) value.getWidth() / 2, (float) value.getHeight() / 2);
+        }});
         return this;
     }
 
@@ -29,15 +30,19 @@ public final class PhysicsBodyBuilder {
 
     public Body get() {
         Body output = world.createBody(this.bodyDef);
-        this.fixtureDef.shape = new PolygonShape() {{
-            setAsBox(texture.getWidth() / 2, texture.getHeight() / 2);
-        }};
-        this.fixtureDef.density = 0.5f;
-        this.fixtureDef.restitution = 0.3f;
         output.createFixture(this.fixtureDef);
-
-        output.setUserData(new Vector2(this.texture.getWidth(), this.texture.getHeight()));
+        output.setLinearDamping(5f);
 
         return output;
+    }
+
+    public PhysicsBodyBuilder setPosition(Vector2 value) {
+        this.bodyDef.position.set(value);
+        return this;
+    }
+
+    public PhysicsBodyBuilder setShape(Shape value) {
+        this.fixtureDef.shape = value;
+        return this;
     }
 }

@@ -8,29 +8,30 @@ import org.ddruganov.entity.component.EntityComponent;
 public class PhysicsComponent implements EntityComponent {
 
     private final Body body;
-    private final PositionTracker positionTracker;
+    private final PositionTracker[] positionTrackers;
     private final VelocityProvider velocityProvider;
 
-    public PhysicsComponent(Body body, PositionTracker positionTracker, VelocityProvider velocityProvider) {
+    public PhysicsComponent(Body body, PositionTracker[] positionTrackers, VelocityProvider velocityProvider) {
         this.body = body;
-        this.positionTracker = positionTracker;
+        this.positionTrackers = positionTrackers;
         this.velocityProvider = velocityProvider;
     }
 
     @Override
     public void update(Game game) {
-        Vector2 velocity = this.velocityProvider.getVelocity();
-        System.out.println(velocity.toString());
-        this.body.applyLinearImpulse(velocity, this.body.getPosition(), true);
+        if (this.velocityProvider != null) {
+            Vector2 velocity = this.velocityProvider.getVelocity();
+            this.body.applyLinearImpulse(velocity, this.body.getPosition(), true);
+        }
 
-        this.positionTracker.setPosition(getCenter());
+        if (this.positionTrackers != null) {
+            for (PositionTracker positionTracker : this.positionTrackers) {
+                positionTracker.setPosition(getPosition());
+            }
+        }
     }
 
-    private Vector2 getCenter() {
-        Vector2 size = (Vector2) this.body.getUserData();
-        return new Vector2(
-                this.body.getPosition().x - (size.x / 2),
-                this.body.getPosition().y - (size.y / 2)
-        );
+    public Vector2 getPosition() {
+        return this.body.getPosition().cpy();
     }
 }

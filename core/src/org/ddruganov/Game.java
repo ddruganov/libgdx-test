@@ -9,10 +9,20 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
+import org.ddruganov.entity.Entity;
+import org.ddruganov.entity.component.physics.PhysicsComponent;
+import org.ddruganov.entity.enemy.spawner.ZombieSpawner;
 import org.ddruganov.entity.player.Player;
+import org.ddruganov.entity.stationary.Wall;
+
+import java.util.ArrayList;
 
 public class Game extends ApplicationAdapter {
 
+    private final int WIDTH = 400;
+    private final int HEIGHT = 240;
+    private final ArrayList<Entity> entities = new ArrayList<>();
+    private final ArrayList<Entity> newEntities = new ArrayList<>();
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
     private OrthographicCamera camera;
@@ -24,9 +34,15 @@ public class Game extends ApplicationAdapter {
         world = new World(Vector2.Zero, true);
         box2DDebugRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800 / 4, 480 / 4);
+        camera.setToOrtho(false, WIDTH, HEIGHT);
         batch = new SpriteBatch();
         player = new Player(this);
+        this.addEntity(new Wall(this, new Vector2(1, 1).scl(-50f), 30, 15));
+        this.addEntity(new ZombieSpawner(this));
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     @Override
@@ -36,6 +52,7 @@ public class Game extends ApplicationAdapter {
 
         ScreenUtils.clear(1, 1, 1, 1);
 
+        camera.position.set(player.getComponent(PhysicsComponent.class).getPosition(), 0);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
@@ -46,6 +63,11 @@ public class Game extends ApplicationAdapter {
         }
 
         player.update(this);
+        this.entities.forEach((e) -> e.update(this));
+        if (!this.newEntities.isEmpty()) {
+            this.entities.addAll(this.newEntities);
+            this.newEntities.clear();
+        }
 
         batch.end();
     }
@@ -61,5 +83,9 @@ public class Game extends ApplicationAdapter {
 
     public World getWorld() {
         return world;
+    }
+
+    public void addEntity(Entity value) {
+        this.newEntities.add(value);
     }
 }

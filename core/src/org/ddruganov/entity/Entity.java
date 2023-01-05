@@ -16,4 +16,8 @@ public class Entity {
         this.components.put(component.getClass().toString(), component);
         return this;
     }
+
+    public <T extends EntityComponent> T getComponent(Class<T> className) {
+        return (T) this.components.get(className.toString());
+    }
 }
