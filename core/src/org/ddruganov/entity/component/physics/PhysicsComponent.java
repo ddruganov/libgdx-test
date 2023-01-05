@@ -19,9 +19,9 @@ public class PhysicsComponent implements EntityComponent {
 
     @Override
     public void update(Game game) {
-        if (velocity = this.velocityProvider.getVelocity() != Vector2.Zero) {
-            this.body.applyLinearImpulse(this.velocityProvider.getVelocity(), this.body.getPosition(), true);
-        }
+        Vector2 velocity = this.velocityProvider.getVelocity();
+        System.out.println(velocity.toString());
+        this.body.applyLinearImpulse(velocity, this.body.getPosition(), true);
 
         this.positionTracker.setPosition(getCenter());
     }
