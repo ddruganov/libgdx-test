@@ -3,15 +3,16 @@ package org.ddruganov;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
-import org.ddruganov.entity.enemy.spawner.ZombieSpawner;
+import org.ddruganov.entity.enemy.Zombie;
+import org.ddruganov.entity.enemy.spawner.Spawner;
 import org.ddruganov.entity.player.Player;
 import org.ddruganov.entity.stationary.Wall;
 
@@ -29,16 +30,47 @@ public class Game extends ApplicationAdapter {
     private SpriteBatch batch;
     private Player player;
 
+    public Camera getCamera() {
+        return camera;
+    }
+
     @Override
     public void create() {
         world = new World(Vector2.Zero, true);
+        world.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+                PhysicsComponent left = (PhysicsComponent) contact.getFixtureA().getBody().getUserData();
+                PhysicsComponent right = (PhysicsComponent) contact.getFixtureB().getBody().getUserData();
+
+                left.onCollision(right);
+                right.onCollision(left);
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+
+            }
+        });
         box2DDebugRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WIDTH, HEIGHT);
         batch = new SpriteBatch();
         player = new Player(this);
-        this.addEntity(new Wall(this, new Vector2(1, 1).scl(-50f), 30, 15));
-        this.addEntity(new ZombieSpawner(this));
+        this.addEntity(new Spawner(this, new Vector2(50f, 50f), 10f, Zombie::new, "zombie.png"));
+        this.addEntity(new Wall(this, new Vector2(-50f, 50f), 16, 16));
+        this.addEntity(new Wall(this, new Vector2(50f, -50f), 32, 32));
+        this.addEntity(new Wall(this, new Vector2(-50f, -50f), 8, 8));
     }
 
     public Player getPlayer() {

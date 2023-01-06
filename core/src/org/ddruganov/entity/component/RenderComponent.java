@@ -1,22 +1,24 @@
 package org.ddruganov.entity.component;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import org.ddruganov.Game;
+import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.physics.PositionTracker;
+import org.ddruganov.render.Renderable;
 
-public class RenderComponent implements EntityComponent, PositionTracker {
+public class RenderComponent extends EntityComponent implements PositionTracker {
 
-    private final Texture texture;
+    private final Renderable renderable;
     private Vector2 position;
 
-    public RenderComponent(Texture texture) {
-        this.texture = texture;
+    public RenderComponent(Entity entity, Renderable renderable) {
+        super(entity);
+        this.renderable = renderable;
     }
 
     @Override
     public void update(Game game) {
-        game.getSpriteBatch().draw(texture, position.x - ((float) texture.getWidth() / 2), position.y - ((float) texture.getHeight() / 2));
+        this.renderable.render(game.getSpriteBatch(), position);
     }
 
     @Override

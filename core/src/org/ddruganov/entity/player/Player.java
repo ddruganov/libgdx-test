@@ -6,28 +6,47 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.RenderComponent;
+import org.ddruganov.entity.component.health.HealthComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
+import org.ddruganov.entity.component.physics.PhysicsComponentBuilder;
 import org.ddruganov.entity.component.physics.PositionTracker;
-import org.ddruganov.entity.component.player.PlayerControllerComponent;
+import org.ddruganov.entity.component.player.UserInputControllerComponent;
+import org.ddruganov.entity.component.spell.SpellCasterComponent;
+import org.ddruganov.render.TextureStack;
 import org.ddruganov.util.PhysicsBodyBuilder;
 
 public class Player extends Entity {
     public Player(Game game) {
         Texture texture = new Texture(Gdx.files.internal("player.png"));
 
-        RenderComponent renderer = new RenderComponent(texture);
+        RenderComponent renderer = new RenderComponent(this, new TextureStack(new Texture[]{texture}));
         addComponent(renderer);
 
-        PlayerControllerComponent controller = new PlayerControllerComponent();
+        SpellCasterComponent spellCaster = new SpellCasterComponent(this);
+        addComponent(spellCaster);
+
+        UserInputControllerComponent controller = new UserInputControllerComponent(this, spellCaster);
         addComponent(controller);
 
-        PhysicsComponent physicsComponent = new PhysicsComponent(
-                new PhysicsBodyBuilder(game.getWorld())
-                        .setTexture(texture)
-                        .setBodyType(BodyDef.BodyType.DynamicBody)
-                        .get(),
-                new PositionTracker[]{renderer},
-                controller);
+        HealthComponent health = new HealthComponent(
+                this,
+                100,
+                null
+        );
+        addComponent(health);
+
+        PhysicsComponent physicsComponent = new PhysicsComponentBuilder()
+                .setEntity(this)
+                .setBody(
+                        new PhysicsBodyBuilder(game.getWorld())
+                                .setTexture(texture)
+                                .setBodyType(BodyDef.BodyType.DynamicBody)
+                                .createBody()
+                )
+                .setPositionTrackers(new PositionTracker[]{renderer})
+                .setVelocityProvider(controller)
+                .setOnCollision(() -> health.damage(10))
+                .createPhysicsComponent();
         addComponent(physicsComponent);
     }
 }

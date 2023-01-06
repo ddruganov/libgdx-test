@@ -28,7 +28,7 @@ public final class PhysicsBodyBuilder {
         return this;
     }
 
-    public Body get() {
+    public Body createBody() {
         Body output = world.createBody(this.bodyDef);
         output.createFixture(this.fixtureDef);
         output.setLinearDamping(5f);
