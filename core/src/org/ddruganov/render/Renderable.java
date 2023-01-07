@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public interface Renderable {
-    void render(SpriteBatch spriteBatch, Vector2 origin);
+    void render(SpriteBatch spriteBatch, Vector2 origin, float rotation);
 
-    int getWidth();
+    float getWidth();
 
-    int getHeight();
+    float getHeight();
 }

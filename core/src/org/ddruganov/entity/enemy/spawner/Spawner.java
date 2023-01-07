@@ -2,6 +2,7 @@ package org.ddruganov.entity.enemy.spawner;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import org.ddruganov.Game;
@@ -9,9 +10,9 @@ import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.RenderComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponentBuilder;
-import org.ddruganov.entity.component.physics.PositionTracker;
-import org.ddruganov.render.TextureStack;
-import org.ddruganov.util.PhysicsBodyBuilder;
+import org.ddruganov.entity.component.physics.TransformTracker;
+import org.ddruganov.physics.PhysicsBodyBuilder;
+import org.ddruganov.render.SpriteStack;
 
 public class Spawner extends Entity {
 
@@ -24,24 +25,24 @@ public class Spawner extends Entity {
         this.cooldownLeft = this.cooldown;
         this.onSpawn = onSpawn;
 
-        TextureStack textureStack = new TextureStack(new Texture[]{
-                new Texture(Gdx.files.internal("spawner.png")),
-                new Texture(Gdx.files.internal(textureName))
+        SpriteStack spriteStack = new SpriteStack(new Sprite[]{
+                new Sprite(new Texture(Gdx.files.internal("player.png"))),
+                new Sprite(new Texture(Gdx.files.internal(textureName)))
         });
 
-        RenderComponent renderer = new RenderComponent(this, textureStack);
+        RenderComponent renderer = new RenderComponent(this, spriteStack);
         addComponent(renderer);
 
         PhysicsComponent physicsComponent = new PhysicsComponentBuilder()
                 .setEntity(this)
                 .setBody(
                         new PhysicsBodyBuilder(game.getWorld())
-                                .setRenderable(textureStack)
+                                .setRenderable(spriteStack)
                                 .setBodyType(BodyDef.BodyType.StaticBody)
                                 .setPosition(position)
                                 .createBody()
                 )
-                .setPositionTrackers(new PositionTracker[]{renderer})
+                .setTransformTrackers(new TransformTracker[]{renderer})
                 .createPhysicsComponent();
         addComponent(physicsComponent);
     }

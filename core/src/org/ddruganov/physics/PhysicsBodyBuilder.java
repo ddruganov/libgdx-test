@@ -1,4 +1,4 @@
-package org.ddruganov.util;
+package org.ddruganov.physics;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -17,10 +17,9 @@ public final class PhysicsBodyBuilder {
     }
 
     public PhysicsBodyBuilder setRenderable(Renderable value) {
-        this.setShape(new PolygonShape() {{
-            setAsBox((float) value.getWidth() / 2, (float) value.getHeight() / 2);
+        return this.setShape(new PolygonShape() {{
+            setAsBox(value.getWidth() / 2, value.getHeight() / 2);
         }});
-        return this;
     }
 
     public PhysicsBodyBuilder setBodyType(BodyDef.BodyType value) {
@@ -47,7 +46,7 @@ public final class PhysicsBodyBuilder {
     }
 
     public PhysicsBodyBuilder setAngle(float value) {
-        this.bodyDef.angle = value;
+        this.bodyDef.angle = value - 90;
         return this;
     }
 }

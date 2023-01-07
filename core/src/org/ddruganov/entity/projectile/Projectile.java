@@ -7,10 +7,10 @@ import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.RenderComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponentBuilder;
-import org.ddruganov.entity.component.physics.PositionTracker;
+import org.ddruganov.entity.component.physics.TransformTracker;
 import org.ddruganov.entity.component.projectile.ProjectileControllerComponent;
+import org.ddruganov.physics.PhysicsBodyBuilder;
 import org.ddruganov.render.Renderable;
-import org.ddruganov.util.PhysicsBodyBuilder;
 
 public abstract class Projectile extends Entity {
     private final Entity sender;
@@ -21,7 +21,7 @@ public abstract class Projectile extends Entity {
         RenderComponent renderer = new RenderComponent(this, renderable);
         addComponent(renderer);
 
-        ProjectileControllerComponent controller = new ProjectileControllerComponent(this, direction, 500);
+        ProjectileControllerComponent controller = new ProjectileControllerComponent(this, direction.cpy(), 500);
         addComponent(controller);
 
         PhysicsComponent physicsComponent = new PhysicsComponentBuilder()
@@ -31,12 +31,16 @@ public abstract class Projectile extends Entity {
                                 .setRenderable(renderable)
                                 .setBodyType(BodyDef.BodyType.DynamicBody)
                                 .setPosition(position)
-                                .setAngle(direction.angleDeg())
+                                .setAngle(direction.cpy().angleDeg())
                                 .createBody()
                 )
-                .setPositionTrackers(new PositionTracker[]{renderer})
+                .setTransformTrackers(new TransformTracker[]{renderer})
                 .setVelocityProvider(controller)
                 .createPhysicsComponent();
         addComponent(physicsComponent);
+    }
+
+    public Entity getSender() {
+        return sender;
     }
 }

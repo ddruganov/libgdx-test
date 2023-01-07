@@ -5,14 +5,15 @@ import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.EntityComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
-import org.ddruganov.entity.component.physics.PositionTracker;
+import org.ddruganov.entity.component.physics.TransformTracker;
 import org.ddruganov.entity.component.physics.VelocityProvider;
+import org.ddruganov.physics.Transform;
 
-public class FollowEntityControllerComponent extends EntityComponent implements VelocityProvider, PositionTracker {
+public class FollowEntityControllerComponent extends EntityComponent implements VelocityProvider, TransformTracker {
 
     private final float speed;
     private Vector2 velocity = Vector2.Zero;
-    private Vector2 position = Vector2.Zero;
+    private Transform transform;
     private Entity entityToFollow;
 
     public FollowEntityControllerComponent(Entity entity, Entity entityToFollow, float speed) {
@@ -23,8 +24,13 @@ public class FollowEntityControllerComponent extends EntityComponent implements 
 
     @Override
     public void update(Game game) {
+
+        if (this.transform == null) {
+            return;
+        }
+
         this.velocity = this.entityToFollow.getComponent(PhysicsComponent.class).getPosition()
-                .sub(this.position)
+                .sub(this.transform.getPosition())
                 .nor()
                 .scl(this.speed);
     }
@@ -42,7 +48,7 @@ public class FollowEntityControllerComponent extends EntityComponent implements 
     }
 
     @Override
-    public void setPosition(Vector2 value) {
-        this.position = value;
+    public void setTransform(org.ddruganov.physics.Transform value) {
+        this.transform = value;
     }
 }

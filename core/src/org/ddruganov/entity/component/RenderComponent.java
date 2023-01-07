@@ -1,15 +1,15 @@
 package org.ddruganov.entity.component;
 
-import com.badlogic.gdx.math.Vector2;
 import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
-import org.ddruganov.entity.component.physics.PositionTracker;
+import org.ddruganov.entity.component.physics.TransformTracker;
+import org.ddruganov.physics.Transform;
 import org.ddruganov.render.Renderable;
 
-public class RenderComponent extends EntityComponent implements PositionTracker {
+public class RenderComponent extends EntityComponent implements TransformTracker {
 
     private final Renderable renderable;
-    private Vector2 position;
+    private Transform transform;
 
     public RenderComponent(Entity entity, Renderable renderable) {
         super(entity);
@@ -18,11 +18,11 @@ public class RenderComponent extends EntityComponent implements PositionTracker 
 
     @Override
     public void update(Game game) {
-        this.renderable.render(game.getSpriteBatch(), position);
+        this.renderable.render(game.getSpriteBatch(), transform.getPosition(), transform.getRotation());
     }
 
     @Override
-    public void setPosition(Vector2 value) {
-        this.position = value;
+    public void setTransform(Transform value) {
+        this.transform = value;
     }
 }

@@ -7,7 +7,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
@@ -15,13 +16,13 @@ import org.ddruganov.entity.enemy.Zombie;
 import org.ddruganov.entity.enemy.spawner.Spawner;
 import org.ddruganov.entity.player.Player;
 import org.ddruganov.entity.stationary.Wall;
+import org.ddruganov.physics.ContactFilter;
+import org.ddruganov.physics.ContactListener;
 
 import java.util.ArrayList;
 
 public class Game extends ApplicationAdapter {
 
-    private final int WIDTH = 400;
-    private final int HEIGHT = 240;
     private final ArrayList<Entity> entities = new ArrayList<>();
     private final ArrayList<Entity> newEntities = new ArrayList<>();
     private World world;
@@ -36,35 +37,13 @@ public class Game extends ApplicationAdapter {
 
     @Override
     public void create() {
+
         world = new World(Vector2.Zero, true);
-        world.setContactListener(new ContactListener() {
-            @Override
-            public void beginContact(Contact contact) {
-                PhysicsComponent left = (PhysicsComponent) contact.getFixtureA().getBody().getUserData();
-                PhysicsComponent right = (PhysicsComponent) contact.getFixtureB().getBody().getUserData();
-
-                left.onCollision(right);
-                right.onCollision(left);
-            }
-
-            @Override
-            public void endContact(Contact contact) {
-
-            }
-
-            @Override
-            public void preSolve(Contact contact, Manifold oldManifold) {
-
-            }
-
-            @Override
-            public void postSolve(Contact contact, ContactImpulse impulse) {
-
-            }
-        });
+        world.setContactFilter(new ContactFilter());
+        world.setContactListener(new ContactListener());
         box2DDebugRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, WIDTH, HEIGHT);
+        camera.setToOrtho(false, 400, 240);
         batch = new SpriteBatch();
         player = new Player(this);
         this.addEntity(new Spawner(this, new Vector2(50f, 50f), 10f, Zombie::new, "zombie.png"));

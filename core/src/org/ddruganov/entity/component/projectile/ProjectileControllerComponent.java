@@ -11,7 +11,7 @@ public class ProjectileControllerComponent extends EntityComponent implements Ve
 
     public ProjectileControllerComponent(Entity entity, Vector2 direction, int speed) {
         super(entity);
-        this.velocity = direction.nor().scl(speed);
+        this.velocity = direction.cpy().nor().scl(speed);
     }
 
     @Override

@@ -5,17 +5,18 @@ import com.badlogic.gdx.physics.box2d.Body;
 import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.EntityComponent;
+import org.ddruganov.physics.Transform;
 
 public class PhysicsComponent extends EntityComponent {
 
     private final Body body;
-    private final PositionTracker[] positionTrackers;
+    private final TransformTracker[] positionTrackers;
     private final VelocityProvider velocityProvider;
     private final OnCollisionCallback onCollision;
 
     public PhysicsComponent(Entity entity,
                             Body body,
-                            PositionTracker[] positionTrackers,
+                            TransformTracker[] positionTrackers,
                             VelocityProvider velocityProvider,
                             OnCollisionCallback onCollision) {
         super(entity);
@@ -34,8 +35,8 @@ public class PhysicsComponent extends EntityComponent {
         }
 
         if (this.positionTrackers != null) {
-            for (PositionTracker positionTracker : this.positionTrackers) {
-                positionTracker.setPosition(getPosition());
+            for (TransformTracker positionTracker : this.positionTrackers) {
+                positionTracker.setTransform(Transform.fromBox2D(this.body));
             }
         }
     }
@@ -45,5 +46,6 @@ public class PhysicsComponent extends EntityComponent {
     }
 
     public void onCollision(PhysicsComponent with) {
+        this.onCollision.invoke(with.getEntity());
     }
 }
