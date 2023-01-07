@@ -52,7 +52,7 @@ public class UserInputControllerComponent extends EntityComponent implements Vel
             ));
             Vector2 mousePos = new Vector2(unprojectedMousePos.x, unprojectedMousePos.y);
             Vector2 direction = mousePos.sub(this.entity.getComponent(PhysicsComponent.class).getPosition()).nor();
-            this.spellCastRequestListener.onSpellCastRequested(direction);
+            this.spellCastRequestListener.onSpellCastRequested(game, direction);
         }
     }
 
