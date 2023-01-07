@@ -15,16 +15,18 @@ import org.ddruganov.util.PhysicsBodyBuilder;
 
 public class Wall extends Entity {
     public Wall(Game game, Vector2 position, int width, int height) {
-        Texture texture = new Texture(new Pixmap(width, height, Pixmap.Format.RGB888));
+        TextureStack textureStack = new TextureStack(new Texture[]{
+                new Texture(new Pixmap(width, height, Pixmap.Format.RGB888))
+        });
 
-        RenderComponent renderer = new RenderComponent(this, new TextureStack(new Texture[]{texture}));
+        RenderComponent renderer = new RenderComponent(this, textureStack);
         addComponent(renderer);
 
         PhysicsComponent physicsComponent = new PhysicsComponentBuilder()
                 .setEntity(this)
                 .setBody(
                         new PhysicsBodyBuilder(game.getWorld())
-                                .setTexture(texture)
+                                .setRenderable(textureStack)
                                 .setPosition(position)
                                 .setBodyType(BodyDef.BodyType.StaticBody)
                                 .createBody()

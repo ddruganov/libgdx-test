@@ -17,9 +17,10 @@ import org.ddruganov.util.PhysicsBodyBuilder;
 
 public class Player extends Entity {
     public Player(Game game) {
-        Texture texture = new Texture(Gdx.files.internal("player.png"));
-
-        RenderComponent renderer = new RenderComponent(this, new TextureStack(new Texture[]{texture}));
+        TextureStack textureStack = new TextureStack(new Texture[]{
+                new Texture(Gdx.files.internal("player.png"))
+        });
+        RenderComponent renderer = new RenderComponent(this, textureStack);
         addComponent(renderer);
 
         SpellCasterComponent spellCaster = new SpellCasterComponent(this);
@@ -39,7 +40,7 @@ public class Player extends Entity {
                 .setEntity(this)
                 .setBody(
                         new PhysicsBodyBuilder(game.getWorld())
-                                .setTexture(texture)
+                                .setRenderable(textureStack)
                                 .setBodyType(BodyDef.BodyType.DynamicBody)
                                 .createBody()
                 )

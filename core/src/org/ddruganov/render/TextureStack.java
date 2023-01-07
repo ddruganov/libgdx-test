@@ -20,4 +20,24 @@ public class TextureStack implements Renderable {
             spriteBatch.draw(texture, x, y);
         }
     }
+
+    @Override
+    public int getWidth() {
+        int value = 0;
+        for (Texture texture : textures) {
+            value = Math.max(value, texture.getWidth());
+        }
+
+        return value;
+    }
+
+    @Override
+    public int getHeight() {
+        int value = 0;
+        for (Texture texture : textures) {
+            value = Math.max(value, texture.getHeight());
+        }
+
+        return value;
+    }
 }

@@ -24,17 +24,19 @@ public class Spawner extends Entity {
         this.cooldownLeft = this.cooldown;
         this.onSpawn = onSpawn;
 
-        Texture texture = new Texture(Gdx.files.internal("spawner.png"));
-        Texture entityTexture = new Texture(Gdx.files.internal(textureName));
+        TextureStack textureStack = new TextureStack(new Texture[]{
+                new Texture(Gdx.files.internal("spawner.png")),
+                new Texture(Gdx.files.internal(textureName))
+        });
 
-        RenderComponent renderer = new RenderComponent(this, new TextureStack(new Texture[]{texture, entityTexture}));
+        RenderComponent renderer = new RenderComponent(this, textureStack);
         addComponent(renderer);
 
         PhysicsComponent physicsComponent = new PhysicsComponentBuilder()
                 .setEntity(this)
                 .setBody(
                         new PhysicsBodyBuilder(game.getWorld())
-                                .setTexture(texture)
+                                .setRenderable(textureStack)
                                 .setBodyType(BodyDef.BodyType.StaticBody)
                                 .setPosition(position)
                                 .createBody()
