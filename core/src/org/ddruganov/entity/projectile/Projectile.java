@@ -5,21 +5,20 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.RenderComponent;
+import org.ddruganov.entity.component.health.HealthComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponentBuilder;
-import org.ddruganov.entity.component.physics.TransformTracker;
 import org.ddruganov.entity.component.projectile.ProjectileControllerComponent;
 import org.ddruganov.physics.PhysicsBodyBuilder;
 import org.ddruganov.render.Renderable;
 
-public abstract class Projectile extends Entity {
+public class Projectile extends Entity {
     private final Entity sender;
+    private final float baseDamage;
 
-    public Projectile(Game game, Entity sender, Renderable renderable, Vector2 position, Vector2 direction) {
+    public Projectile(Game game, Entity sender, Renderable renderable, Vector2 position, Vector2 direction, float baseDamage) {
         this.sender = sender;
-
-        RenderComponent renderer = new RenderComponent(this, renderable);
-        addComponent(renderer);
+        this.baseDamage = baseDamage;
 
         ProjectileControllerComponent controller = new ProjectileControllerComponent(this, direction.cpy(), 500);
         addComponent(controller);
@@ -34,10 +33,28 @@ public abstract class Projectile extends Entity {
                                 .setAngle(direction.cpy().angleDeg())
                                 .createBody()
                 )
-                .setTransformTrackers(new TransformTracker[]{renderer})
                 .setVelocityProvider(controller)
+                .setOnCollision((Entity with) -> {
+                    try {
+                        HealthComponent health = with.getComponent(HealthComponent.class);
+                        if (health == null) {
+                            return;
+                        }
+
+                        health.damage(this.getDamage());
+                    } finally {
+                        this.destroy();
+                    }
+                })
                 .createPhysicsComponent();
         addComponent(physicsComponent);
+
+        RenderComponent renderer = new RenderComponent(this, renderable, physicsComponent);
+        addComponent(renderer);
+    }
+
+    private float getDamage() {
+        return this.baseDamage;
     }
 
     public Entity getSender() {

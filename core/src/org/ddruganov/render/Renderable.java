@@ -9,4 +9,6 @@ public interface Renderable {
     float getWidth();
 
     float getHeight();
+
+    void destroy();
 }

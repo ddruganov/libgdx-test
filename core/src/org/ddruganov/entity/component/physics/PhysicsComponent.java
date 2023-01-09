@@ -7,38 +7,35 @@ import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.EntityComponent;
 import org.ddruganov.physics.Transform;
 
-public class PhysicsComponent extends EntityComponent {
+public class PhysicsComponent extends EntityComponent implements TransformProvider {
 
     private final Body body;
-    private final TransformTracker[] positionTrackers;
     private final VelocityProvider velocityProvider;
     private final OnCollisionCallback onCollision;
 
     public PhysicsComponent(Entity entity,
                             Body body,
-                            TransformTracker[] positionTrackers,
                             VelocityProvider velocityProvider,
                             OnCollisionCallback onCollision) {
         super(entity);
         this.body = body;
         this.body.setUserData(this);
-        this.positionTrackers = positionTrackers;
         this.velocityProvider = velocityProvider;
         this.onCollision = onCollision;
     }
 
     @Override
     public void update(Game game) {
-        if (this.velocityProvider != null) {
-            Vector2 velocity = this.velocityProvider.getVelocity();
-            this.body.applyLinearImpulse(velocity, this.body.getPosition(), true);
+        handleVelocity();
+    }
+
+    private void handleVelocity() {
+        if (this.velocityProvider == null) {
+            return;
         }
 
-        if (this.positionTrackers != null) {
-            for (TransformTracker positionTracker : this.positionTrackers) {
-                positionTracker.setTransform(Transform.fromBox2D(this.body));
-            }
-        }
+        Vector2 velocity = this.velocityProvider.getVelocity();
+        this.body.applyLinearImpulse(velocity, this.body.getPosition(), true);
     }
 
     public Vector2 getPosition() {
@@ -46,6 +43,23 @@ public class PhysicsComponent extends EntityComponent {
     }
 
     public void onCollision(PhysicsComponent with) {
+
+        if (this.onCollision == null) {
+            return;
+        }
+
         this.onCollision.invoke(with.getEntity());
+    }
+
+    @Override
+    public Transform getTransform() {
+        return Transform.fromBox2D(this.body);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+
+        this.body.getWorld().destroyBody(this.body);
     }
 }

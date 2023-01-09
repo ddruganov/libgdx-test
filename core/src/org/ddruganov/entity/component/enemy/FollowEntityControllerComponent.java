@@ -5,15 +5,12 @@ import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.EntityComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
-import org.ddruganov.entity.component.physics.TransformTracker;
 import org.ddruganov.entity.component.physics.VelocityProvider;
-import org.ddruganov.physics.Transform;
 
-public class FollowEntityControllerComponent extends EntityComponent implements VelocityProvider, TransformTracker {
+public class FollowEntityControllerComponent extends EntityComponent implements VelocityProvider {
 
     private final float speed;
     private Vector2 velocity = Vector2.Zero;
-    private Transform transform;
     private Entity entityToFollow;
 
     public FollowEntityControllerComponent(Entity entity, Entity entityToFollow, float speed) {
@@ -24,13 +21,8 @@ public class FollowEntityControllerComponent extends EntityComponent implements 
 
     @Override
     public void update(Game game) {
-
-        if (this.transform == null) {
-            return;
-        }
-
         this.velocity = this.entityToFollow.getComponent(PhysicsComponent.class).getPosition()
-                .sub(this.transform.getPosition())
+                .sub(this.entity.getComponent(PhysicsComponent.class).getPosition())
                 .nor()
                 .scl(this.speed);
     }
@@ -45,10 +37,5 @@ public class FollowEntityControllerComponent extends EntityComponent implements 
             throw new IllegalArgumentException(value.getClass().toString() + " does not have a physics component attached");
         }
         this.entityToFollow = value;
-    }
-
-    @Override
-    public void setTransform(org.ddruganov.physics.Transform value) {
-        this.transform = value;
     }
 }

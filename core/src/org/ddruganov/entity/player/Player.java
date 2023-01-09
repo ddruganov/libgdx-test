@@ -10,7 +10,6 @@ import org.ddruganov.entity.component.RenderComponent;
 import org.ddruganov.entity.component.health.HealthComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponentBuilder;
-import org.ddruganov.entity.component.physics.TransformTracker;
 import org.ddruganov.entity.component.player.UserInputControllerComponent;
 import org.ddruganov.entity.component.spell.SpellCasterComponent;
 import org.ddruganov.entity.enemy.Zombie;
@@ -19,11 +18,9 @@ import org.ddruganov.render.SpriteStack;
 
 public class Player extends Entity {
     public Player(Game game) {
-        SpriteStack spriteStack = new SpriteStack(new Sprite[]{
+        SpriteStack spriteStack = new SpriteStack(
                 new Sprite(new Texture(Gdx.files.internal("player.png")))
-        });
-        RenderComponent renderer = new RenderComponent(this, spriteStack);
-        addComponent(renderer);
+        );
 
         SpellCasterComponent spellCaster = new SpellCasterComponent(this);
         addComponent(spellCaster);
@@ -46,10 +43,12 @@ public class Player extends Entity {
                                 .setBodyType(BodyDef.BodyType.DynamicBody)
                                 .createBody()
                 )
-                .setTransformTrackers(new TransformTracker[]{renderer})
                 .setVelocityProvider(controller)
                 .setOnCollision((Entity with) -> health.damage(with.getClass() == Zombie.class ? 10 : 0))
                 .createPhysicsComponent();
         addComponent(physicsComponent);
+
+        RenderComponent renderer = new RenderComponent(this, spriteStack, physicsComponent);
+        addComponent(renderer);
     }
 }

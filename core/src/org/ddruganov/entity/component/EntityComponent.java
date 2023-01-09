@@ -17,4 +17,7 @@ public abstract class EntityComponent {
     public Entity getEntity() {
         return entity;
     }
+
+    public void destroy() {
+    }
 }

@@ -9,9 +9,9 @@ import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.RenderComponent;
 import org.ddruganov.entity.component.enemy.FollowEntityControllerComponent;
+import org.ddruganov.entity.component.health.HealthComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponentBuilder;
-import org.ddruganov.entity.component.physics.TransformTracker;
 import org.ddruganov.physics.PhysicsBodyBuilder;
 import org.ddruganov.render.SpriteStack;
 
@@ -20,15 +20,15 @@ public class Zombie extends Entity {
     public static final int SPEED = 5;
 
     public Zombie(Game game, Vector2 position) {
-        SpriteStack spriteStack = new SpriteStack(new Sprite[]{
+        SpriteStack spriteStack = new SpriteStack(
                 new Sprite(new Texture(Gdx.files.internal("zombie.png")))
-        });
-
-        RenderComponent renderer = new RenderComponent(this, spriteStack);
-        addComponent(renderer);
+        );
 
         FollowEntityControllerComponent controller = new FollowEntityControllerComponent(this, game.getPlayer(), SPEED);
         addComponent(controller);
+
+        HealthComponent healthComponent = new HealthComponent(this, 10, this::destroy);
+        addComponent(healthComponent);
 
         PhysicsComponent physicsComponent = new PhysicsComponentBuilder()
                 .setEntity(this)
@@ -39,9 +39,11 @@ public class Zombie extends Entity {
                                 .setPosition(position)
                                 .createBody()
                 )
-                .setTransformTrackers(new TransformTracker[]{renderer, controller})
                 .setVelocityProvider(controller)
                 .createPhysicsComponent();
         addComponent(physicsComponent);
+
+        RenderComponent renderer = new RenderComponent(this, spriteStack, physicsComponent);
+        addComponent(renderer);
     }
 }

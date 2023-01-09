@@ -19,12 +19,11 @@ import org.ddruganov.entity.stationary.Wall;
 import org.ddruganov.physics.ContactFilter;
 import org.ddruganov.physics.ContactListener;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game extends ApplicationAdapter {
 
-    private final ArrayList<Entity> entities = new ArrayList<>();
-    private final ArrayList<Entity> newEntities = new ArrayList<>();
+    private final CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
     private OrthographicCamera camera;
@@ -75,10 +74,6 @@ public class Game extends ApplicationAdapter {
 
         player.update(this);
         this.entities.forEach((e) -> e.update(this));
-        if (!this.newEntities.isEmpty()) {
-            this.entities.addAll(this.newEntities);
-            this.newEntities.clear();
-        }
 
         batch.end();
     }
@@ -97,6 +92,10 @@ public class Game extends ApplicationAdapter {
     }
 
     public void addEntity(Entity value) {
-        this.newEntities.add(value);
+        this.entities.add(value);
+    }
+
+    public void removeEntity(Entity value) {
+        this.entities.remove(value);
     }
 }

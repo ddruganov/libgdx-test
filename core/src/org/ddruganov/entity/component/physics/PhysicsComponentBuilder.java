@@ -6,7 +6,6 @@ import org.ddruganov.entity.Entity;
 public class PhysicsComponentBuilder {
     private Entity entity;
     private Body body;
-    private TransformTracker[] positionTrackers = new TransformTracker[]{};
     private VelocityProvider velocityProvider = null;
     private OnCollisionCallback onCollision = null;
 
@@ -17,11 +16,6 @@ public class PhysicsComponentBuilder {
 
     public PhysicsComponentBuilder setBody(Body body) {
         this.body = body;
-        return this;
-    }
-
-    public PhysicsComponentBuilder setTransformTrackers(TransformTracker[] positionTrackers) {
-        this.positionTrackers = positionTrackers;
         return this;
     }
 
@@ -36,6 +30,6 @@ public class PhysicsComponentBuilder {
     }
 
     public PhysicsComponent createPhysicsComponent() {
-        return new PhysicsComponent(entity, body, positionTrackers, velocityProvider, onCollision);
+        return new PhysicsComponent(entity, body, velocityProvider, onCollision);
     }
 }

@@ -10,18 +10,14 @@ import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.RenderComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponentBuilder;
-import org.ddruganov.entity.component.physics.TransformTracker;
 import org.ddruganov.physics.PhysicsBodyBuilder;
 import org.ddruganov.render.SpriteStack;
 
 public class Wall extends Entity {
     public Wall(Game game, Vector2 position, int width, int height) {
-        SpriteStack spriteStack = new SpriteStack(new Sprite[]{
+        SpriteStack spriteStack = new SpriteStack(
                 new Sprite(new Texture(new Pixmap(width, height, Pixmap.Format.RGB888)))
-        });
-
-        RenderComponent renderer = new RenderComponent(this, spriteStack);
-        addComponent(renderer);
+        );
 
         PhysicsComponent physicsComponent = new PhysicsComponentBuilder()
                 .setEntity(this)
@@ -32,8 +28,10 @@ public class Wall extends Entity {
                                 .setBodyType(BodyDef.BodyType.StaticBody)
                                 .createBody()
                 )
-                .setTransformTrackers(new TransformTracker[]{renderer})
                 .createPhysicsComponent();
         addComponent(physicsComponent);
+
+        RenderComponent renderer = new RenderComponent(this, spriteStack, physicsComponent);
+        addComponent(renderer);
     }
 }

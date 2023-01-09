@@ -8,9 +8,9 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.RenderComponent;
+import org.ddruganov.entity.component.health.HealthComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponentBuilder;
-import org.ddruganov.entity.component.physics.TransformTracker;
 import org.ddruganov.physics.PhysicsBodyBuilder;
 import org.ddruganov.render.SpriteStack;
 
@@ -25,13 +25,13 @@ public class Spawner extends Entity {
         this.cooldownLeft = this.cooldown;
         this.onSpawn = onSpawn;
 
-        SpriteStack spriteStack = new SpriteStack(new Sprite[]{
-                new Sprite(new Texture(Gdx.files.internal("player.png"))),
+        SpriteStack spriteStack = new SpriteStack(
+                new Sprite(new Texture(Gdx.files.internal("spawner.png"))),
                 new Sprite(new Texture(Gdx.files.internal(textureName)))
-        });
+        );
 
-        RenderComponent renderer = new RenderComponent(this, spriteStack);
-        addComponent(renderer);
+        HealthComponent health = new HealthComponent(this, 100, this::destroy);
+        addComponent(health);
 
         PhysicsComponent physicsComponent = new PhysicsComponentBuilder()
                 .setEntity(this)
@@ -42,9 +42,11 @@ public class Spawner extends Entity {
                                 .setPosition(position)
                                 .createBody()
                 )
-                .setTransformTrackers(new TransformTracker[]{renderer})
                 .createPhysicsComponent();
         addComponent(physicsComponent);
+
+        RenderComponent renderer = new RenderComponent(this, spriteStack, physicsComponent);
+        addComponent(renderer);
     }
 
     @Override

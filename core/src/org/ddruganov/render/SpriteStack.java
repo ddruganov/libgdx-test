@@ -6,14 +6,19 @@ import com.badlogic.gdx.math.Vector2;
 
 public class SpriteStack implements Renderable {
 
-    private final Sprite[] sprites;
+    private Sprite[] sprites;
 
-    public SpriteStack(Sprite[] sprites) {
+    public SpriteStack(Sprite... sprites) {
         this.sprites = sprites;
     }
 
     @Override
     public void render(SpriteBatch spriteBatch, Vector2 origin, float rotation) {
+
+        if (this.sprites == null) {
+            return;
+        }
+
         for (Sprite sprite : sprites) {
             sprite.setRotation(rotation);
             sprite.setOriginBasedPosition(origin.x, origin.y);
@@ -39,5 +44,13 @@ public class SpriteStack implements Renderable {
         }
 
         return value;
+    }
+
+    @Override
+    public void destroy() {
+        for (Sprite sprite : sprites) {
+            sprite.getTexture().dispose();
+        }
+        this.sprites = null;
     }
 }
