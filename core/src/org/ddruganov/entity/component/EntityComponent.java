@@ -1,7 +1,7 @@
 package org.ddruganov.entity.component;
 
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
+import org.ddruganov.layer.GameplayLayer;
 
 public abstract class EntityComponent {
 
@@ -11,7 +11,7 @@ public abstract class EntityComponent {
         this.entity = entity;
     }
 
-    public void update(Game game) {
+    public void update(GameplayLayer layer) {
     }
 
     public Entity getEntity() {

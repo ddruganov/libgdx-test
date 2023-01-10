@@ -2,13 +2,13 @@ package org.ddruganov.entity.projectile;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.RenderComponent;
 import org.ddruganov.entity.component.health.HealthComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponentBuilder;
 import org.ddruganov.entity.component.projectile.ProjectileControllerComponent;
+import org.ddruganov.layer.GameplayLayer;
 import org.ddruganov.physics.PhysicsBodyBuilder;
 import org.ddruganov.render.Renderable;
 
@@ -16,7 +16,9 @@ public class Projectile extends Entity {
     private final Entity sender;
     private final float baseDamage;
 
-    public Projectile(Game game, Entity sender, Renderable renderable, Vector2 position, Vector2 direction, float baseDamage) {
+    public Projectile(GameplayLayer layer, Entity sender, Renderable renderable, Vector2 position, Vector2 direction, float baseDamage) {
+        super(layer);
+
         this.sender = sender;
         this.baseDamage = baseDamage;
 
@@ -26,7 +28,7 @@ public class Projectile extends Entity {
         PhysicsComponent physicsComponent = new PhysicsComponentBuilder()
                 .setEntity(this)
                 .setBody(
-                        new PhysicsBodyBuilder(game.getWorld())
+                        new PhysicsBodyBuilder(layer.getPhysicsWorld())
                                 .setRenderable(renderable)
                                 .setBodyType(BodyDef.BodyType.DynamicBody)
                                 .setPosition(position)

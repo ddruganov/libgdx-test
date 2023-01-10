@@ -1,11 +1,11 @@
 package org.ddruganov.entity.component.enemy;
 
 import com.badlogic.gdx.math.Vector2;
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.EntityComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.VelocityProvider;
+import org.ddruganov.layer.GameplayLayer;
 
 public class FollowEntityControllerComponent extends EntityComponent implements VelocityProvider {
 
@@ -20,7 +20,13 @@ public class FollowEntityControllerComponent extends EntityComponent implements 
     }
 
     @Override
-    public void update(Game game) {
+    public void update(GameplayLayer layer) {
+
+        if (this.entityToFollow == null || this.entityToFollow.isDestroyed()) {
+            this.velocity = Vector2.Zero;
+            return;
+        }
+
         this.velocity = this.entityToFollow.getComponent(PhysicsComponent.class).getPosition()
                 .sub(this.entity.getComponent(PhysicsComponent.class).getPosition())
                 .nor()
@@ -33,6 +39,11 @@ public class FollowEntityControllerComponent extends EntityComponent implements 
     }
 
     public void setEntityToFollow(Entity value) {
+
+        if (value.isDestroyed()) {
+            return;
+        }
+
         if (value.getComponent(PhysicsComponent.class) == null) {
             throw new IllegalArgumentException(value.getClass().toString() + " does not have a physics component attached");
         }

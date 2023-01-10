@@ -1,7 +1,7 @@
 package org.ddruganov.entity;
 
-import org.ddruganov.Game;
 import org.ddruganov.entity.component.EntityComponent;
+import org.ddruganov.layer.GameplayLayer;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -11,31 +11,35 @@ public class Entity {
 
     private final HashMap<String, EntityComponent> components = new HashMap<>();
     private final UUID uuid;
-    private boolean isDeleted = false;
+    private boolean isDestroyed = false;
 
-    public Entity() {
+    public Entity(GameplayLayer ignoredLayer) {
         this.uuid = UUID.randomUUID();
     }
 
-    public void update(Game game) {
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
 
-        if (this.isDeleted) {
+    public void update(GameplayLayer layer) {
+
+        if (this.isDestroyed) {
             this.components.values().forEach(EntityComponent::destroy);
             this.components.clear();
 
-            game.removeEntity(this);
+            layer.removeEntity(this);
             return;
         }
 
-        this.components.forEach((key, value) -> value.update(game));
+        this.components.forEach((key, value) -> value.update(layer));
     }
 
     public void addComponent(EntityComponent component) {
-        this.components.put(component.getClass().toString(), component);
+        this.components.put(component.getClass().getSimpleName(), component);
     }
 
     public <T extends EntityComponent> T getComponent(Class<T> className) {
-        return (T) this.components.get(className.toString());
+        return (T) this.components.get(className.getSimpleName());
     }
 
     public UUID getUuid() {
@@ -43,7 +47,7 @@ public class Entity {
     }
 
     public void destroy() {
-        this.isDeleted = true;
+        this.isDestroyed = true;
     }
 
     @Override

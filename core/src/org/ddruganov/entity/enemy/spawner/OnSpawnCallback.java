@@ -1,9 +1,9 @@
 package org.ddruganov.entity.enemy.spawner;
 
 import com.badlogic.gdx.math.Vector2;
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
+import org.ddruganov.layer.GameplayLayer;
 
 public interface OnSpawnCallback {
-    Entity spawn(Game game, Vector2 position);
+    Entity spawn(GameplayLayer layer, Vector2 position);
 }

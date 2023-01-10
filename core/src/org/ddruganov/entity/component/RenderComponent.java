@@ -1,8 +1,8 @@
 package org.ddruganov.entity.component;
 
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.physics.TransformProvider;
+import org.ddruganov.layer.GameplayLayer;
 import org.ddruganov.physics.Transform;
 import org.ddruganov.render.Renderable;
 
@@ -18,9 +18,9 @@ public class RenderComponent extends EntityComponent {
     }
 
     @Override
-    public void update(Game game) {
+    public void update(GameplayLayer layer) {
         Transform transform = this.transformProvider.getTransform();
-        this.renderable.render(game.getSpriteBatch(), transform.getPosition(), transform.getRotation());
+        this.renderable.render(layer.getSpriteBatch(), transform.getPosition(), transform.getRotation());
     }
 
     @Override

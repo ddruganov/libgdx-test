@@ -10,7 +10,7 @@ public class FireSpell extends Spell {
 
     @Override
     protected int getCooldown() {
-        return 1000;
+        return 250;
     }
 
     @Override

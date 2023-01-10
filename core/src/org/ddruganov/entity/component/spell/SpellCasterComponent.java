@@ -1,9 +1,9 @@
 package org.ddruganov.entity.component.spell;
 
 import com.badlogic.gdx.math.Vector2;
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.EntityComponent;
+import org.ddruganov.layer.GameplayLayer;
 
 public class SpellCasterComponent extends EntityComponent implements SpellCastRequestListener {
 
@@ -16,12 +16,12 @@ public class SpellCasterComponent extends EntityComponent implements SpellCastRe
     }
 
     @Override
-    public void onSpellCastRequested(Game game, Vector2 direction) {
-        Entity casted = this.currentSpell.cast(game, this.entity, direction);
+    public void onSpellCastRequested(GameplayLayer layer, Vector2 direction) {
+        Entity casted = this.currentSpell.cast(layer, this.entity, direction);
         if (casted == null) {
             return;
         }
 
-        game.addEntity(casted);
+        layer.addEntity(casted);
     }
 }

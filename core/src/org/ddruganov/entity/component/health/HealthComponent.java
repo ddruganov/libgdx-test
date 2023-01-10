@@ -1,6 +1,5 @@
 package org.ddruganov.entity.component.health;
 
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.EntityComponent;
 
@@ -15,13 +14,10 @@ public class HealthComponent extends EntityComponent {
         this.onDeath = onDeath;
     }
 
-    @Override
-    public void update(Game game) {
-
-    }
-
     public void damage(float value) {
         this.health -= value;
+
+        System.out.println(this.entity.getClass().getSimpleName() + " health = " + this.health);
 
         if (this.health > 0) {
             return;

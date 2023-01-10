@@ -11,6 +11,7 @@ public class ContactListener implements com.badlogic.gdx.physics.box2d.ContactLi
         PhysicsComponent left = (PhysicsComponent) contact.getFixtureA().getBody().getUserData();
         PhysicsComponent right = (PhysicsComponent) contact.getFixtureB().getBody().getUserData();
 
+        left.onCollision(right);
         right.onCollision(left);
     }
 

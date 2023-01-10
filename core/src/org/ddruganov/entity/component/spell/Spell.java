@@ -1,9 +1,9 @@
 package org.ddruganov.entity.component.spell;
 
 import com.badlogic.gdx.math.Vector2;
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.projectile.ProjectileBuilder;
+import org.ddruganov.layer.GameplayLayer;
 import org.ddruganov.render.Renderable;
 
 import java.util.Date;
@@ -12,7 +12,7 @@ public abstract class Spell {
 
     private Date lastCast = new Date();
 
-    public Entity cast(Game game, Entity sender, Vector2 direction) {
+    public Entity cast(GameplayLayer layer, Entity sender, Vector2 direction) {
 
         Date now = new Date();
 
@@ -24,7 +24,7 @@ public abstract class Spell {
 
         this.lastCast = now;
 
-        return new ProjectileBuilder(game)
+        return new ProjectileBuilder(layer)
                 .setSender(sender)
                 .setDirection(direction)
                 .setBaseDamage(this.getBaseDamage())

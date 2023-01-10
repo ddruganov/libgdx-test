@@ -12,6 +12,10 @@ public class ContactFilter implements com.badlogic.gdx.physics.box2d.ContactFilt
         Entity left = ((PhysicsComponent) fixtureA.getBody().getUserData()).getEntity();
         Entity right = ((PhysicsComponent) fixtureB.getBody().getUserData()).getEntity();
 
+        if (left instanceof Projectile && right instanceof Projectile) {
+            return false;
+        }
+
         boolean isProjectile = right instanceof Projectile;
         if (!isProjectile) {
             return true;

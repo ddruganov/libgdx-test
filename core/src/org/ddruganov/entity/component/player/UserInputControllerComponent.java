@@ -4,12 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.EntityComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.VelocityProvider;
 import org.ddruganov.entity.component.spell.SpellCastRequestListener;
+import org.ddruganov.layer.GameplayLayer;
 
 public class UserInputControllerComponent extends EntityComponent implements VelocityProvider {
 
@@ -23,7 +23,7 @@ public class UserInputControllerComponent extends EntityComponent implements Vel
     }
 
     @Override
-    public void update(Game game) {
+    public void update(GameplayLayer layer) {
 
         Vector2 newVelocity = Vector2.Zero;
 
@@ -45,14 +45,14 @@ public class UserInputControllerComponent extends EntityComponent implements Vel
         this.velocity.set(newVelocity.scl(SPEED));
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            Vector3 unprojectedMousePos = game.getCamera().unproject(new Vector3(
+            Vector3 unprojectedMousePos = layer.getCamera().unproject(new Vector3(
                     Gdx.input.getX(),
                     Gdx.input.getY(),
                     0
             ));
             Vector2 mousePos = new Vector2(unprojectedMousePos.x, unprojectedMousePos.y);
             Vector2 direction = mousePos.sub(this.entity.getComponent(PhysicsComponent.class).getPosition()).nor();
-            this.spellCastRequestListener.onSpellCastRequested(game, direction);
+            this.spellCastRequestListener.onSpellCastRequested(layer, direction);
         }
     }
 

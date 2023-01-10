@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.RenderComponent;
 import org.ddruganov.entity.component.health.HealthComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponent;
 import org.ddruganov.entity.component.physics.PhysicsComponentBuilder;
+import org.ddruganov.layer.GameplayLayer;
 import org.ddruganov.physics.PhysicsBodyBuilder;
 import org.ddruganov.render.SpriteStack;
 
@@ -20,7 +20,8 @@ public class Spawner extends Entity {
     private final OnSpawnCallback onSpawn;
     private float cooldownLeft;
 
-    public Spawner(Game game, Vector2 position, float cooldown, OnSpawnCallback onSpawn, String textureName) {
+    public Spawner(GameplayLayer layer, Vector2 position, float cooldown, OnSpawnCallback onSpawn, String textureName) {
+        super(layer);
         this.cooldown = cooldown;
         this.cooldownLeft = this.cooldown;
         this.onSpawn = onSpawn;
@@ -36,7 +37,7 @@ public class Spawner extends Entity {
         PhysicsComponent physicsComponent = new PhysicsComponentBuilder()
                 .setEntity(this)
                 .setBody(
-                        new PhysicsBodyBuilder(game.getWorld())
+                        new PhysicsBodyBuilder(layer.getPhysicsWorld())
                                 .setRenderable(spriteStack)
                                 .setBodyType(BodyDef.BodyType.StaticBody)
                                 .setPosition(position)
@@ -50,9 +51,9 @@ public class Spawner extends Entity {
     }
 
     @Override
-    public void update(Game game) {
+    public void update(GameplayLayer layer) {
 
-        super.update(game);
+        super.update(layer);
 
         cooldownLeft -= Gdx.graphics.getDeltaTime();
         if (cooldownLeft > 0) {
@@ -63,7 +64,7 @@ public class Spawner extends Entity {
                 new Vector2(1, 1).scl(((float) Math.random() * 2 - 1) * 50f, ((float) Math.random() * 2 - 1) * 50f)
         );
 
-        game.addEntity(this.onSpawn.spawn(game, spawnPos));
+        layer.addEntity(this.onSpawn.spawn(layer, spawnPos));
 
         cooldownLeft = cooldown;
     }

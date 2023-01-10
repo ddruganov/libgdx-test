@@ -2,9 +2,9 @@ package org.ddruganov.entity.component.physics;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
 import org.ddruganov.entity.component.EntityComponent;
+import org.ddruganov.layer.GameplayLayer;
 import org.ddruganov.physics.Transform;
 
 public class PhysicsComponent extends EntityComponent implements TransformProvider {
@@ -25,7 +25,7 @@ public class PhysicsComponent extends EntityComponent implements TransformProvid
     }
 
     @Override
-    public void update(Game game) {
+    public void update(GameplayLayer layer) {
         handleVelocity();
     }
 
