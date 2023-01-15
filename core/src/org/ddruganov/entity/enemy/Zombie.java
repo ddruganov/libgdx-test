@@ -33,7 +33,7 @@ public class Zombie extends Entity {
         HealthComponent healthComponent = new HealthComponent(this, 10, this::destroy);
         addComponent(healthComponent);
 
-        AttackOnProximityComponent attackComponent = new AttackOnProximityComponent(this, layer.getPlayer(), 32, 20, 1000);
+        AttackOnProximityComponent attackComponent = new AttackOnProximityComponent(this, layer.getPlayer(), 32, 20, 1f);
         addComponent(attackComponent);
 
         PhysicsComponent physicsComponent = new PhysicsComponentBuilder()

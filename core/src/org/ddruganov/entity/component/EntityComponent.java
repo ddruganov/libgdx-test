@@ -18,6 +18,6 @@ public abstract class EntityComponent {
         return entity;
     }
 
-    public void destroy() {
+    public void destroy(GameplayLayer layer) {
     }
 }

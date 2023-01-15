@@ -42,13 +42,13 @@ public class PhysicsComponent extends EntityComponent implements TransformProvid
         return this.body.getPosition().cpy();
     }
 
-    public void onCollision(PhysicsComponent with) {
+    public void onCollision(PhysicsComponent with, Vector2 at) {
 
         if (this.onCollision == null) {
             return;
         }
 
-        this.onCollision.invoke(with.getEntity());
+        this.onCollision.invoke(with.getEntity(), at);
     }
 
     @Override
@@ -57,8 +57,8 @@ public class PhysicsComponent extends EntityComponent implements TransformProvid
     }
 
     @Override
-    public void destroy() {
-        super.destroy();
+    public void destroy(GameplayLayer layer) {
+        super.destroy(layer);
 
         this.body.getWorld().destroyBody(this.body);
     }

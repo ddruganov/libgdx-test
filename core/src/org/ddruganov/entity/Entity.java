@@ -11,10 +11,16 @@ public class Entity {
 
     private final HashMap<String, EntityComponent> components = new HashMap<>();
     private final UUID uuid;
+    private final OnDestructionCallback onDestruction;
     private boolean isDestroyed = false;
 
     public Entity(GameplayLayer ignoredLayer) {
+        this(ignoredLayer, null);
+    }
+
+    public Entity(GameplayLayer ignoredLayer, OnDestructionCallback onDestruction) {
         this.uuid = UUID.randomUUID();
+        this.onDestruction = onDestruction;
     }
 
     public boolean isDestroyed() {
@@ -24,7 +30,11 @@ public class Entity {
     public void update(GameplayLayer layer) {
 
         if (this.isDestroyed) {
-            this.components.values().forEach(EntityComponent::destroy);
+            if (this.onDestruction != null) {
+                this.onDestruction.invoke(this);
+            }
+
+            this.components.values().forEach(c -> c.destroy(layer));
             this.components.clear();
 
             layer.removeEntity(this);

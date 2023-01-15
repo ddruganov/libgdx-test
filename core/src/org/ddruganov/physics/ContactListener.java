@@ -1,5 +1,6 @@
 package org.ddruganov.physics;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
@@ -11,8 +12,11 @@ public class ContactListener implements com.badlogic.gdx.physics.box2d.ContactLi
         PhysicsComponent left = (PhysicsComponent) contact.getFixtureA().getBody().getUserData();
         PhysicsComponent right = (PhysicsComponent) contact.getFixtureB().getBody().getUserData();
 
-        left.onCollision(right);
-        right.onCollision(left);
+        Vector2 contactPoint = contact.getWorldManifold().getPoints()[contact.getWorldManifold().getNumberOfContactPoints() - 1];
+
+        contact.getWorldManifold().getPoints();
+        left.onCollision(right, contactPoint);
+        right.onCollision(left, contactPoint);
     }
 
     @Override

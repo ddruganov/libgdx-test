@@ -24,8 +24,8 @@ public class RenderComponent extends EntityComponent {
     }
 
     @Override
-    public void destroy() {
-        super.destroy();
+    public void destroy(GameplayLayer layer) {
+        super.destroy(layer);
 
         this.renderable.destroy();
     }

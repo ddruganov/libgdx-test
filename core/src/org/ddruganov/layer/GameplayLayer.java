@@ -1,7 +1,10 @@
 package org.ddruganov.layer;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import org.ddruganov.Game;
 import org.ddruganov.entity.Entity;
@@ -13,12 +16,20 @@ import org.ddruganov.entity.stationary.Wall;
 import org.ddruganov.physics.ContactFilter;
 import org.ddruganov.physics.ContactListener;
 
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 public final class GameplayLayer extends Layer {
 
     private final World physicsWorld;
-    private final CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
+    private final Box2DDebugRenderer physicsDebugRenderer;
+    private final HashMap<UUID, Entity> entities = new HashMap<>();
+
+    private final ArrayList<Entity> newEntities = new ArrayList<>();
+    private final ArrayList<UUID> deletedEntities = new ArrayList<>();
+
+    private final Player player;
 
     public GameplayLayer(Game game, SpriteBatch spriteBatch) {
         super(game, spriteBatch, 400, 240);
@@ -26,8 +37,10 @@ public final class GameplayLayer extends Layer {
         this.physicsWorld = new World(Vector2.Zero, true);
         this.physicsWorld.setContactFilter(new ContactFilter());
         this.physicsWorld.setContactListener(new ContactListener());
+        this.physicsDebugRenderer = new Box2DDebugRenderer(true, true, true, true, true, true);
 
-        this.addEntity(new Player(this));
+        this.player = new Player(this);
+        this.addEntity(player);
         this.addEntity(new Spawner(this, new Vector2(50f, 50f), 10f, Zombie::new, "zombie.png"));
         this.addEntity(new Wall(this, new Vector2(-50f, 50f), 16, 16));
         this.addEntity(new Wall(this, new Vector2(50f, -50f), 32, 32));
@@ -39,38 +52,46 @@ public final class GameplayLayer extends Layer {
     }
 
     public void addEntity(Entity value) {
-        this.entities.add(value);
+        this.newEntities.add(value);
     }
 
     public void removeEntity(Entity value) {
-        this.entities.remove(value);
+        this.deletedEntities.add(value.getUuid());
     }
 
     @Override
     protected void _update() {
+
         this.physicsWorld.step(1 / 60f, 6, 2);
 
-        this.entities.forEach((e) -> e.update(this));
+        if (!this.newEntities.isEmpty()) {
+            this.newEntities.forEach(e -> this.entities.put(e.getUuid(), e));
+            this.newEntities.clear();
+        }
+
+        if (!this.deletedEntities.isEmpty()) {
+            this.deletedEntities.forEach(this.entities::remove);
+            this.deletedEntities.clear();
+        }
+
+        this.entities.forEach((uuid, e) -> e.update(this));
+
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            this.physicsDebugRenderer.render(this.physicsWorld, this.getCamera().combined);
+        }
     }
 
     @Override
     public void update() {
 
-        Player player = this.getPlayer();
-        if (player != null) {
-            this.getCamera().position.set(player.getComponent(PhysicsComponent.class).getPosition(), 0);
+        if (this.player != null) {
+            this.getCamera().position.set(this.player.getComponent(PhysicsComponent.class).getPosition(), 0);
         }
 
         super.update();
     }
 
     public Player getPlayer() {
-        Entity firstEntity = this.entities.get(0);
-
-        if (firstEntity instanceof Player) {
-            return (Player) firstEntity;
-        }
-
-        return null;
+        return this.player;
     }
 }

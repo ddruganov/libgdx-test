@@ -61,7 +61,11 @@ public class Spawner extends Entity {
         }
 
         Vector2 spawnPos = this.getComponent(PhysicsComponent.class).getPosition().add(
-                new Vector2(1, 1).scl(((float) Math.random() * 2 - 1) * 50f, ((float) Math.random() * 2 - 1) * 50f)
+                new Vector2(
+                        (float) Math.random() * 2 - 1,
+                        (float) Math.random() * 2 - 1
+                )
+                        .scl(50f)
         );
 
         layer.addEntity(this.onSpawn.spawn(layer, spawnPos));

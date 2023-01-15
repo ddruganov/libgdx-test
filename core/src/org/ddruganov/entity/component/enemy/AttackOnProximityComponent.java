@@ -32,7 +32,7 @@ public class AttackOnProximityComponent extends EntityComponent {
             return;
         }
 
-        this.cooldownLeft -= Gdx.graphics.getDeltaTime() * 1000;
+        this.cooldownLeft -= Gdx.graphics.getDeltaTime();
         if (this.cooldownLeft > 0) {
             return;
         }
